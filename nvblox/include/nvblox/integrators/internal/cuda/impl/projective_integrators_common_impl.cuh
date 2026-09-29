@@ -39,8 +39,11 @@ __device__ inline bool projectThreadVoxel(
   // Depth
   *u_depth_ptr = sensor.getDepth(*p_voxel_center_C_ptr);
 
-  // Test for max depth
-  if ((max_depth > 0.0f) && (*u_depth_ptr > max_depth)) {
+  // IHMC: bound integration by radial distance from the current sensor.
+  // Keep u_depth_ptr in the sensor's native convention for TSDF residuals:
+  // camera images contain optical-axis depth, not radial range.
+  if ((max_depth > 0.0f) &&
+      (p_voxel_center_C_ptr->squaredNorm() > max_depth * max_depth)) {
     return false;
   }
 

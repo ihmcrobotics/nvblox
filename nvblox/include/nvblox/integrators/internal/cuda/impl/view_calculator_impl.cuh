@@ -92,13 +92,20 @@ __global__ void combinedBlockIndicesInImageKernel(
   if (depth <= 0.0f) {
     return;
   }
-  if (max_integration_distance_m > 0.0f && depth > max_integration_distance_m) {
-    depth = max_integration_distance_m;
+  // IHMC: use the same radial limit for block selection as voxel integration.
+  // Camera rays have z=1, so their norm grows toward the image boundaries.
+  // Do not change the source depth image or the TSDF distance convention.
+  const Vector3f ray = sensor.vectorFromPixelIndices(Index2D(pixel_col, pixel_row));
+  const float ray_norm = ray.norm();
+  if (!(depth > 0.0f) || !isfinite(depth) || !(ray_norm > 0.0f)) {
+    return;
+  }
+  float ray_end_depth = depth + max_integration_distance_behind_surface_m;
+  if (max_integration_distance_m > 0.0f) {
+    ray_end_depth = fminf(ray_end_depth, max_integration_distance_m / ray_norm);
   }
 
-  // Ok now project this thing into space.
-  Vector3f p_C = (depth + max_integration_distance_behind_surface_m) *
-                 sensor.vectorFromPixelIndices(Index2D(pixel_col, pixel_row));
+  Vector3f p_C = ray_end_depth * ray;
   Vector3f p_L = T_L_C * p_C;
 
   // Now we have the position of the thing in space. Now we need the block
