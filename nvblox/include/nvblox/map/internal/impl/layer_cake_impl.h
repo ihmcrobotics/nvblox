@@ -30,7 +30,7 @@ LayerType* LayerCake::add(BlockMemoryPoolParams block_memory_pool_params) {
     LayerType* return_ptr = layer_ptr.get();
     // Store (as BaseLayer ptr)
     layers_.emplace(std::type_index(typeid(LayerType)), std::move(layer_ptr));
-    LOG(INFO) << "Adding Layer with type: " << typeid(LayerType).name()
+    VLOG(1) << "Adding Layer with type: " << typeid(LayerType).name()
               << ", voxel_size: " << voxel_size_ << ", and memory_type: "
               << toString(block_memory_pool_params.memory_type.get())
               << " to LayerCake.";

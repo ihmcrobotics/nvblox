@@ -76,7 +76,7 @@ void LayerCakeStreamer::add() {
     streamers_.emplace(
         std::type_index(typeid(LayerType)),
         std::make_unique<LayerStreamerOldestBlocks<LayerType>>());
-    LOG(INFO) << "Adding Streamer with type: "
+    VLOG(1) << "Adding Streamer with type: "
               << typeid(LayerStreamerOldestBlocks<LayerType>).name()
               << " to LayerCake.";
   } else {

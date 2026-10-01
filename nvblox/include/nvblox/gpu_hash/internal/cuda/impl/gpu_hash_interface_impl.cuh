@@ -82,7 +82,7 @@ GPUHashImpl<BlockType>::GPUHashImpl(int max_num_blocks,
     : impl_(Index3DDeviceHashMapType<BlockType>::createDeviceObject(
           max_num_blocks)) {
   max_num_blocks_ = impl_.bucket_count();
-  LOG(INFO) << "Creating a GPUHashImpl with requested capacity of "
+  VLOG(1) << "Creating a GPUHashImpl with requested capacity of "
             << max_num_blocks << " blocks. Real capacity: " << max_num_blocks_;
 
   // Initialize memory to zero to make compute-sanitizer's initcheck happy.
